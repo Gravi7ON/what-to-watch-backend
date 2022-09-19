@@ -11,7 +11,7 @@ class CommandVersion implements CliCommandInterface {
     return content.version;
   }
 
-  public async execute(): Promise<void> {
+  public execute(): void {
     const version = this.readVersion();
     console.log(chalk.blue(version));
   }
