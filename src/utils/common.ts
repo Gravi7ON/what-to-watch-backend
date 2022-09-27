@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { TypesGenre} from '../types/film-type/genres.js';
 import { Film } from '../types/film-type/film.js';
 import { GenreTypes } from '../types/film-type/film-genres.enum.js';
@@ -51,7 +52,11 @@ const createFilm = (row: string) => {
   } as Film;
 };
 
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : '';
+const getErrorMessage = (error: unknown): string => error instanceof Error ? error.message : '';
 
-export {createFilm, getErrorMessage};
+const createSHA256 = (line: string, salt: string): string => {
+  const shaHasher = crypto.createHmac('sha256', salt);
+  return shaHasher.update(line).digest('hex');
+};
+
+export { createFilm, getErrorMessage, createSHA256 };
