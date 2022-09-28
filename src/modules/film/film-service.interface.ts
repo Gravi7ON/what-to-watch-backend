@@ -4,6 +4,6 @@ import { FilmEntity } from './film-entity.js';
 
 export interface FilmServiceInterface {
   create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
-  findById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
-  findOrCreate(filmId: string, dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
+  findByName(filmName: string): Promise<DocumentType<FilmEntity> | null>;
+  findOrCreate(filmName: string, dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
 }

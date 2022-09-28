@@ -1,4 +1,4 @@
-import typegoose, {getModelForClass, defaultClasses} from '@typegoose/typegoose';
+import typegoose, {getModelForClass, defaultClasses, Severity} from '@typegoose/typegoose';
 import { User } from '../../types/user-type/user.js';
 import { createSHA256 } from '../../utils/common.js';
 
@@ -9,6 +9,9 @@ export interface UserEntity extends defaultClasses.Base {}
 @modelOptions({
   schemaOptions: {
     collection: 'users'
+  },
+  options: {
+    allowMixed: Severity.ALLOW
   }
 })
 export class UserEntity extends defaultClasses.TimeStamps implements User {
@@ -16,39 +19,37 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     super();
 
     this.email = data.email;
-    this.avatar = data.avatar;
+    this.avatar = data.avatar as string;
     this.userName = data.userName;
   }
 
   @prop({
     unique: true,
     required: true,
-    match: [/^([\w-\\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'Email is incorrect'],
     default: ''
   })
   public email: string;
 
   @prop({
-    match: [/([^s]+(.(?i)(jpg|png))$)/, 'User image must be in .jpg or .png format'],
-    default: ''
+    default: 'unknown.jpg',
+    match: [/.jpg|.png/, 'Incorrect file format']
   })
-  public avatar: string | undefined;
+  public avatar: string;
 
   @prop({
     require: true,
-    minLength: [1, 'Min length for name is 1'],
-    maxLength: [15, 'Max length for name is 15'],
-    default: ''
+    default: '',
+    minlength: [1, 'Min length for user name is 1 character'],
+    maxlength: [15, 'Min length for user name is 15 characters']
   })
   public userName: string;
 
   @prop({
     required: true,
-    default: '',
-    minLength: [6, 'Min length for password is 6'],
-    maxLength: [12, 'Max length for password is 12']
+    minlength: [6, 'Min length for password is 6 character'],
+    maxlength: [12, 'Min length for password is 12 characters']
   })
-  private password!: string;
+  public password!: string;
 
   public setPassword(password: string, salt: string) {
     this.password = createSHA256(password, salt);

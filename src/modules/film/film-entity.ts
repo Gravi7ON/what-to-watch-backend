@@ -1,4 +1,4 @@
-import typegoose, { getModelForClass, defaultClasses, Ref } from '@typegoose/typegoose';
+import typegoose, { getModelForClass, defaultClasses, Ref, Severity } from '@typegoose/typegoose';
 import { UserEntity } from '../user/user-entity.js';
 import { GenreTypes } from '../../types/film-type/film-genres.enum.js';
 
@@ -9,22 +9,25 @@ export interface FilmEntity extends defaultClasses.Base {}
 @modelOptions({
   schemaOptions: {
     collection: 'films'
+  },
+  options: {
+    allowMixed: Severity.ALLOW
   }
 })
 export class FilmEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
-    minlength: [2, 'Min length for film name is 2 characters'],
-    maxlength: [100,'Max length for film name is 100 characters'],
-    trim: true
+    trim: true,
+    minlength: [2, 'Min length for name is 2 characters'],
+    maxlength: [100, 'Min length for name is 100 characters']
   })
   public name!: string;
 
   @prop({
     required:true,
-    minlength: [20, 'Min length for description is 20 charactes'],
-    maxlength: [1024, 'Max length for description is 1024 characters'],
-    trim: true
+    trim: true,
+    minlength: [20, 'Min length for description is 20 characters'],
+    maxlength: [1024, 'Min length for description is 1024 characters']
   })
   public description!: string;
 
@@ -70,7 +73,7 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
     minlength: [2, 'Min length for director is 2 characters'],
-    maxlength: [50, 'Max length for director is 50 characters']
+    maxlength: [50, 'Min length for director is 50 characters']
   })
   public director!: string;
 
@@ -98,15 +101,15 @@ export class FilmEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    match: [/([^s]+(.(?i)(jpg))$)/, 'User image must be in .jpg format'],
-    default: ''
+    default: 'unknown.jpg',
+    match: [/.jpg/, 'Incorrect file format']
   })
   public posterImage!: string;
 
   @prop({
     required: true,
-    match: [/([^s]+(.(?i)(jpg))$)/, 'User image must be in .jpg format'],
-    default: ''
+    default: 'unknown.jpg',
+    match: [/.jpg/, 'Incorrect file format']
   })
   public backgroundImage!: string;
 }
