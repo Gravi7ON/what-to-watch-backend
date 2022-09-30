@@ -6,6 +6,7 @@
 /docs/
 .idea/*
 /mocks/*.large.tsv
+/mongodb
 
 .DS_Store
 coverage
