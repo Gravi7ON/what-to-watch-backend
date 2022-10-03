@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: API сервер для проекта «Что посмотреть».
   description: |-
@@ -199,6 +199,8 @@ paths:
 
                 starring:
                   type: array
+                  items:
+                    type: string
                   example: ["Bill Murray"]
 
                 runTime:
@@ -251,13 +253,13 @@ paths:
                     example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
 
   /films/{filmId}:
-    get:
-      tags:
-        - films
-      summary: Получить фильм
-      description: Возвращает фильм с идентификатором `filmId`.
-
-      parameters:
+    parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
         - in: path
           name: filmId
           schema:
@@ -265,6 +267,12 @@ paths:
             example: 6329c3d6a04ab1061c6425ea
           required: true
           description: Уникальный идентификатор фильма
+
+    get:
+      tags:
+        - films
+      summary: Получить фильм
+      description: Возвращает фильм с идентификатором `filmId`.
 
       responses:
         "200":
@@ -284,14 +292,6 @@ paths:
         - ApiKeyAuth: []
       summary: Редактирование карточки с фильмом созданная пользователем
       description: Возвращает фильм с идентификатором `filmId`.
-
-      parameters:
-        - in: header
-          name: X-Token
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
-          required: true
 
       requestBody:
         description: Объект редактируемого фильма вместе и id.
@@ -331,6 +331,8 @@ paths:
 
                 starring:
                   type: array
+                  items:
+                    type: string
                   example: ["Bill Murray"]
 
                 runTime:
@@ -389,14 +391,6 @@ paths:
         - ApiKeyAuth: []
       summary: Удаление карточки с фильмом
       description: Удаление карточки с фильмом созданная пользователем.
-
-      parameters:
-        - in: header
-          name: X-Token
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
-          required: true
 
       responses:
         "204":
@@ -753,6 +747,8 @@ components:
 
         starring:
           type: array
+          items:
+            type: string
           example: ["Bill Murray"]
 
         runTime:
