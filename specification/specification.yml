@@ -1,0 +1,821 @@
+openapi: 3.1.0
+info:
+  title: API сервер для проекта «Что посмотреть».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Что посмотреть».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+tags:
+  - name: films
+    description: Действия с фильмами.
+  - name: users
+    description: Действия с пользователем.
+  - name: comments
+    description: Действия с комментариями.
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля.
+
+      requestBody:
+        description: Объект, содержащий логин и пароль пользователя.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: keks@htmlacademy.ru
+
+                password:
+                  type: string
+                  example: 123456
+        required: true
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "400":
+          description: Ошибка тела запроса.
+
+    get:
+      tags:
+        - users
+      security:
+        - ApiKeyAuth: []
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю.
+
+      parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+  /users/logout:
+    delete:
+      tags:
+        - users
+      security:
+        - ApiKeyAuth: []
+      summary: Завершить сеанс пользователя
+      description: Завершает сеанс работы — выход из закрытой части приложения.
+
+      parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      responses:
+        "204":
+          description: Сеанс завершён.
+
+  /films:
+    get:
+      tags:
+        - films
+      summary: Получить список фильмов
+      description: Возвращает массив фильмов. Каждый фильм описан в виде объекта.
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/film'
+
+    post:
+      tags:
+        - films
+      security:
+        - ApiKeyAuth: []
+      summary: Добавление новой карточки с фильмом
+      description: Возвращает фильм с идентификатором `filmId`.
+
+      parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      requestBody:
+        description: Объект нового фильма.
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                name:
+                  type: string
+                  example: The Grand Budapest Hotel
+
+                posterImage:
+                  type: string
+                  example: img/the-grand-budapest-hotel-poster.jpg
+
+                backgroundImage:
+                  type: string
+                  example: img/the-grand-budapest-hotel-bg.jpg
+
+                backgroundColor:
+                  type: string
+                  example: "#ffffff"
+
+                description:
+                  type: string
+                  example: In the 1930s, the Grand Budapest Hotel is a popular European ski resort, presided over by concierge Gustave H. (Ralph Fiennes). Zero, a junior lobby boy, becomes Gustave's friend and protege.
+
+                director:
+                  type: string
+                  example: Wes Anderson
+
+                starring:
+                  type: array
+                  example: ["Bill Murray"]
+
+                runTime:
+                  type: number
+                  example: 99
+
+                genre:
+                  type: string
+                  example: Comedy
+
+                released:
+                  type: number
+                  example: 2014
+
+                userId:
+                  type: string
+                  example: 6329c3d6a04ab1061c6425ea
+
+                publishDate:
+                  type: string
+                  example: Mon Oct 03 2022 16:17:11 GMT+0500 (Екатеринбург, стандартное время)
+
+                previewVideoLink:
+                  type: string
+                  example: https://some-link
+
+                videoLink:
+                  type: string
+                  example: https://some-link
+        required: true
+
+
+      responses:
+        "201":
+          description: Карточка создана.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+  /films/{filmId}:
+    get:
+      tags:
+        - films
+      summary: Получить фильм
+      description: Возвращает фильм с идентификатором `filmId`.
+
+      parameters:
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+        "404":
+          description: Фильм не найден
+
+    post:
+      tags:
+        - films
+      security:
+        - ApiKeyAuth: []
+      summary: Редактирование карточки с фильмом созданная пользователем
+      description: Возвращает фильм с идентификатором `filmId`.
+
+      parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      requestBody:
+        description: Объект редактируемого фильма вместе и id.
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                id:
+                  type: string
+                  example: 6329c3d6a04ab1061c6425ea
+
+                name:
+                  type: string
+                  example: The Grand Budapest Hotel
+
+                posterImage:
+                  type: string
+                  example: img/the-grand-budapest-hotel-poster.jpg
+
+                backgroundImage:
+                  type: string
+                  example: img/the-grand-budapest-hotel-bg.jpg
+
+                backgroundColor:
+                  type: string
+                  example: "#ffffff"
+
+                description:
+                  type: string
+                  example: In the 1930s, the Grand Budapest Hotel is a popular European ski resort, presided over by concierge Gustave H. (Ralph Fiennes). Zero, a junior lobby boy, becomes Gustave's friend and protege.
+
+                director:
+                  type: string
+                  example: Wes Anderson
+
+                starring:
+                  type: array
+                  example: ["Bill Murray"]
+
+                runTime:
+                  type: number
+                  example: 99
+
+                genre:
+                  type: string
+                  example: Comedy
+
+                released:
+                  type: number
+                  example: 2014
+
+                userId:
+                  type: string
+                  example: 6329c3d6a04ab1061c6425ea
+
+                publishDate:
+                  type: string
+                  example: Mon Oct 03 2022 16:17:11 GMT+0500 (Екатеринбург, стандартное время)
+
+                previewVideoLink:
+                  type: string
+                  example: https://some-link
+
+                videoLink:
+                  type: string
+                  example: https://some-link
+        required: true
+
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+    delete:
+      tags:
+        - films
+      security:
+        - ApiKeyAuth: []
+      summary: Удаление карточки с фильмом
+      description: Удаление карточки с фильмом созданная пользователем.
+
+      parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      responses:
+        "204":
+          description: Карточка удалена.
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+  /films/{filmId}/similar:
+    get:
+      tags:
+        - films
+      summary: Получить список похожих фильмов
+      description: Возвращает массив фильмов. Каждый фильм описан в виде объекта.
+
+      parameters:
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма.
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/film'
+
+        "404":
+          description: Фильмы не найдены.
+
+  /promo:
+    get:
+      tags:
+        - films
+      summary: Получить промо-фильм
+      description: Возвращает фильм в виде объекта.
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/film'
+
+        "404":
+          description: Фильм не найден.
+
+  /favorite:
+    get:
+      tags:
+        - films
+      security:
+        - ApiKeyAuth: []
+      summary: Получить список фильмов «к просмотру»
+      description: Возвращает массив фильмов, добавленных в список «к просмотру».
+
+      parameters:
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/film'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+  /favorite/{filmId}/{status}:
+    post:
+      tags:
+        - films
+      security:
+        - ApiKeyAuth: []
+      summary: Изменить статус «к просмотру» у фильма
+      description: Возвращает фильм с идентификатором `filmId` с актуальным состоянием поля `isFavorite`.
+
+      parameters:
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма.
+        - in: path
+          name: status
+          schema:
+            type: integer
+            example: 1
+          required: true
+          description: Статус фильма. Может быть `1` или `0`, где `1` добавляет фильма в список «к просмотру», а `0` удаляет.
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+  /comments/{filmId}:
+    get:
+      tags:
+        - comments
+      summary: Получить список комментариев
+      description: Возвращает список комментариев для фильма с идентификатором `filmId`.
+
+      parameters:
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма.
+
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+
+        "400":
+          description: Ошибка тела запроса.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Фильм id: 6329c3d6a04ab1061c6425ea не существует'
+
+    post:
+      tags:
+        - comments
+      security:
+        - ApiKeyAuth: []
+      summary: Добавить новый комментарий
+      description: Добавляет новый комментарий для фильма с идентификатором `filmId`.
+
+      parameters:
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма.
+        - in: header
+          name: X-Token
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+
+      requestBody:
+        description: Объект, содержащий комментарий и оценку пользователя.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: Discerning travellers and Wes Anderson fans will luxuriate in the glorious Mittel-European kitsch of one of the director's funniest and most exquisitely designed movies in years.
+
+                rating:
+                  type: string
+                  example: 7
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий создан.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+
+        "400":
+          description: Ошибка тела запроса.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Фильм id: 6329c3d6a04ab1061c6425ea не существует'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Token
+
+  schemas:
+    createUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        userName:
+          type: string
+          example: Keks
+
+        avatar:
+          type: string
+          example: unknown.jpg
+
+        password:
+          type: string
+          example: 123456
+
+    user:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 6329c3d6a04ab1061c6425ea
+
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        userName:
+          type: string
+          example: Keks
+
+        avatar:
+          type: string
+          example: unknown.jpg
+
+        token:
+          type: string
+          example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+
+    film:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 6329c3d6a04ab1061c6425ea
+
+        name:
+          type: string
+          example: The Grand Budapest Hotel
+
+        posterImage:
+          type: string
+          example: img/the-grand-budapest-hotel-poster.jpg
+
+        backgroundImage:
+          type: string
+          example: img/the-grand-budapest-hotel-bg.jpg
+
+        backgroundColor:
+          type: string
+          example: "#ffffff"
+
+        description:
+          type: string
+          example: In the 1930s, the Grand Budapest Hotel is a popular European ski resort, presided over by concierge Gustave H. (Ralph Fiennes). Zero, a junior lobby boy, becomes Gustave's friend and protege.
+
+        rating:
+          type: number
+          example: 8.9
+
+        scoresCount:
+          type: number
+          example: 240
+
+        director:
+          type: string
+          example: Wes Anderson
+
+        starring:
+          type: array
+          example: ["Bill Murray"]
+
+        runTime:
+          type: number
+          example: 99
+
+        genre:
+          type: string
+          example: Comedy
+
+        released:
+          type: number
+          example: 2014
+
+        userId:
+          type: string
+          example: 6329c3d6a04ab1061c6425ea
+
+        publishDate:
+          type: string
+          example: Mon Oct 03 2022 16:17:11 GMT+0500 (Екатеринбург, стандартное время)
+
+        previewVideoLink:
+          type: string
+          example: https://some-link
+
+        videoLink:
+          type: string
+          example: https://some-link
+
+        isFavorite:
+          type: boolean
+          example: true
+
+
+    comment:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 6329c3d6a04ab1061c6425ea
+
+        text:
+          type: string
+          example: Discerning travellers and Wes Anderson fans will luxuriate in the glorious Mittel-European kitsch of one of the director's funniest and most exquisitely designed movies in years.
+
+        filmRating:
+          type: number
+          example: 8.9
+
+        publishDate:
+          type: string
+          example: Mon Oct 03 2022 16:17:11 GMT+0500 (Екатеринбург, стандартное время)
+
+        author:
+          type: object
+
+          properties:
+            userId:
+              type: string
+              example: 6329c3d6a04ab1061c6425ea
+
+            userName:
+              type: string
+              example: Kate Muir
