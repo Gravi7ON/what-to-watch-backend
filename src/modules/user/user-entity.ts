@@ -40,14 +40,12 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     require: true,
     default: '',
     minlength: [1, 'Min length for user name is 1 character'],
-    maxlength: [15, 'Min length for user name is 15 characters']
+    maxlength: [15, 'Max length for user name is 15 characters']
   })
   public userName: string;
 
   @prop({
-    required: true,
-    minlength: [6, 'Min length for password is 6 character'],
-    maxlength: [12, 'Min length for password is 12 characters']
+    required: true
   })
   public password!: string;
 
