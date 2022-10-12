@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { UserEntity } from './user-entity.js';
 import { DocumentType, types } from '@typegoose/typegoose';
+import { UserEntity } from './user-entity.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import { UserServiceInterface } from './user-service.interface.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { Component } from '../../types/component-types.js';
+import UpdateUserDto from './dto/update-user.dto.js';
 
 @injectable()
 class UserService implements UserServiceInterface {
@@ -40,6 +41,12 @@ class UserService implements UserServiceInterface {
     }
 
     return this.create(dto, salt);
+  }
+
+  public async updateById(userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, dto, {new: true})
+      .exec();
   }
 }
 

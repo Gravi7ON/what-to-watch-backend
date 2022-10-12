@@ -14,6 +14,9 @@ import { UserEntity, UserModel } from './modules/user/user-entity.js';
 import { FilmServiceInterface } from './modules/film/film-service.interface.js';
 import { FilmEntity, FilmModel } from './modules/film/film-entity.js';
 import FilmService from './modules/film/film-service.js';
+import CommentService from './modules/comment/comment-service.js';
+import { CommentServiceInterface } from './modules/comment/comment-service.interface.js';
+import { CommentEntity, CommentModel } from './modules/comment/comment-entity.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -24,5 +27,7 @@ applicationContainer.bind<UserServiceInterface>(Component.UserServiceInterface).
 applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
 applicationContainer.bind<FilmServiceInterface>(Component.FilmServiceInterface).to(FilmService);
 applicationContainer.bind<types.ModelType<FilmEntity>>(Component.FilmModel).toConstantValue(FilmModel);
+applicationContainer.bind<CommentServiceInterface>(Component.CommentServiceInterface).to(CommentService).inSingletonScope();
+applicationContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
 
 export { applicationContainer };

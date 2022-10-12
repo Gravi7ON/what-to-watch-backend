@@ -6,8 +6,6 @@ export default class CreateFilmDto {
   public backgroundImage!: string;
   public backgroundColor!: string;
   public description!: string;
-  public rating!: number;
-  public scoresCount!: number;
   public director!: string;
   public starring!: string[];
   public runTime!: number;
