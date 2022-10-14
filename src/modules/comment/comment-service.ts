@@ -18,9 +18,8 @@ export default class CommentService implements CommentServiceInterface {
       ...dto,
       filmId
     };
-    const result = await this.commentModel.create(commentWithFilmId);
 
-    return result;
+    return await this.commentModel.create(commentWithFilmId);
   }
 
   public async findById(filmId: string): Promise<DocumentType<CommentEntity>[]> {

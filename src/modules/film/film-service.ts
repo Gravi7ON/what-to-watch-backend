@@ -43,22 +43,10 @@ class FilmService implements FilmServiceInterface {
             }
           },
           {
-            $lookup: {
-              from: 'users',
-              localField: 'userId',
-              foreignField: '_id',
-              as: 'userId'
-            }
-          },
-          {
-            $unwind: {
-              path :'$userId',
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
             $addFields: {
-              scoresCount: {$size: '$comments'}, rating: {$avg: '$comments.filmRating'}
+              id: {$toString: '$_id'},
+              scoresCount: {$size: '$comments'},
+              rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
             }
           },
           {$unset: 'comments'},
@@ -89,22 +77,10 @@ class FilmService implements FilmServiceInterface {
           }
         },
         {
-          $lookup: {
-            from: 'users',
-            localField: 'userId',
-            foreignField: '_id',
-            as: 'userId'
-          }
-        },
-        {
-          $unwind: {
-            path :'$userId',
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        {
           $addFields: {
-            scoresCount: {$size: '$comments'}, rating: {$avg: '$comments.filmRating'}
+            id: {$toString: '$_id'},
+            scoresCount: {$size: '$comments'},
+            rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
           }
         },
         {$unset: 'comments'},
@@ -140,22 +116,10 @@ class FilmService implements FilmServiceInterface {
           }
         },
         {
-          $lookup: {
-            from: 'users',
-            localField: 'userId',
-            foreignField: '_id',
-            as: 'userId'
-          }
-        },
-        {
-          $unwind: {
-            path :'$userId',
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        {
           $addFields: {
-            scoresCount: {$size: '$comments'}, rating: {$avg: '$comments.filmRating'}
+            id: {$toString: '$_id'},
+            scoresCount: {$size: '$comments'},
+            rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
           }
         },
         {$unset: 'comments'},
@@ -178,22 +142,10 @@ class FilmService implements FilmServiceInterface {
           }
         },
         {
-          $lookup: {
-            from: 'users',
-            localField: 'userId',
-            foreignField: '_id',
-            as: 'userId'
-          }
-        },
-        {
-          $unwind: {
-            path :'$userId',
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        {
           $addFields: {
-            scoresCount: {$size: '$comments'}, rating: {$avg: '$comments.filmRating'}
+            id: {$toString: '$_id'},
+            scoresCount: {$size: '$comments'},
+            rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
           }
         },
         {$unset: 'comments'},

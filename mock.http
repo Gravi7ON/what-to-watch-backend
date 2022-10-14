@@ -2,3 +2,30 @@
 GET http://localhost:5050/api HTTP/1.1
 
 ###
+GET http://localhost:3000/films HTTP/1.1
+
+###
+POST http://localhost:3000/films HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Snatch",
+    "posterImage": "https://10.react.pages.academy/static/film/poster/Snatch.jpg",
+    "previewImage": "https://10.react.pages.academy/static/film/preview/snatch.jpg",
+    "backgroundImage": "https://10.react.pages.academy/static/film/background/Snatch.jpg",
+    "backgroundColor": "#FDFDFC",
+    "description": "Unscrupulous boxing promoters, violent bookmakers, a Russian gangster, incompetent amateur robbers and supposedly Jewish jewelers fight to track down a priceless stolen diamond.",
+    "director": "Guy Ritchie",
+    "starring": [
+      "Jason Statham",
+      "Brad Pitt",
+      "Benicio Del Toro"
+    ],
+    "runTime": 104,
+    "genre": "Comedy",
+    "released": 2000,
+    "userId": "6342c5045ad5c9057706c644",
+    "publishDate": "2022-09-28T13:48:56.371Z",
+    "videoLink": "https://10.react.pages.academy/static/film/video/matrix.mp4",
+    "previewVideoLink": "https://10.react.pages.academy/static/film/video/dog.mp4"
+}
