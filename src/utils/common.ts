@@ -64,4 +64,8 @@ const createSHA256 = (line: string, salt: string): string => {
 const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
   plainToInstance(someDto, plainObject, {excludeExtraneousValues: true});
 
-export { createFilm, getErrorMessage, createSHA256, fillDTO };
+
+const createErrorObject = (message: string) => ({
+  error: message,
+});
+export { createFilm, getErrorMessage, createSHA256, fillDTO, createErrorObject };

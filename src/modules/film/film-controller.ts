@@ -9,6 +9,9 @@ import { FilmServiceInterface } from './film-service.interface.js';
 import { fillDTO } from '../../utils/common.js';
 import FilmResponse from './response/film-response.js';
 import CreateFilmDto from './dto/create-film.dto.js';
+import HttpError from '../../common/error/http-error.js';
+import { DEFAULT_FILMS_COUNT } from './film-constant.js';
+import { getRandomPositiveInteger } from '../../utils/random.js';
 
 @injectable()
 export default class FilmController extends Controller {
@@ -20,34 +23,171 @@ export default class FilmController extends Controller {
 
     this.logger.info('Register routes for FilmController...');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.getAllFilms});
+    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createFilm});
+    this.addRoute({path: '/favorite', method: HttpMethod.Get, handler: this.getFavoriteFilms});
+    this.addRoute({path: '/promo', method: HttpMethod.Get, handler: this.getPromoFilm});
+    this.addRoute({path: '/favorite/:filmId/:status', method: HttpMethod.Post, handler: this.changeFavoriteFilm});
+    this.addRoute({path: '/:filmId', method: HttpMethod.Get, handler: this.getFilm});
+    this.addRoute({path: '/:filmId', method: HttpMethod.Post, handler: this.editFilm});
+    this.addRoute({path: '/:filmId', method: HttpMethod.Delete, handler: this.deleteFilm});
+    this.addRoute({path: '/:filmId/similar', method: HttpMethod.Get, handler: this.getSimilarFilms});
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
+  public async getPromoFilm(_req: Request, res: Response): Promise<void> {
+    const promoFilms = await this.filmService.findAllFims();
+
+    if (!promoFilms) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        'can\'t find promo film',
+        'FilmController'
+      );
+    }
+
+    this.ok(
+      res,
+      fillDTO(FilmResponse, promoFilms[getRandomPositiveInteger(0, promoFilms.length - 1)])
+    );
+  }
+
+  public async changeFavoriteFilm(req: Request, res: Response): Promise<void> {
+    const statusFilm = req.params.status;
+    const changedFilm = await this.filmService
+      .changeStatusFavoriteFilms(req.params.filmId, Number(statusFilm));
+
+    if (!changedFilm) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Film with id «${req.params.filmId}» doesn't exist.`,
+        'FilmController'
+      );
+    }
+
+    this.logger.info('The film was changed status');
+
+    this.ok(
+      res,
+      fillDTO(FilmResponse, changedFilm)
+    );
+  }
+
+  public async getFavoriteFilms(_req: Request, res: Response): Promise<void> {
+    const favoriteFilms = await this.filmService.findFavoriteFilms();
+
+    if (!favoriteFilms) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        'Favorite films don\'t add yet.',
+        'FilmController'
+      );
+    }
+
+    this.ok(
+      res,
+      fillDTO(FilmResponse, favoriteFilms)
+    );
+  }
+
+  public async getSimilarFilms(req: Request, res: Response): Promise<void> {
+    const similarFilms = await this.filmService.findSimilarFilmsByGenre(req.params.filmId, DEFAULT_FILMS_COUNT);
+
+    if (!similarFilms) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Similar films with id «${req.params.filmId}» don't exist.`,
+        'FilmController'
+      );
+    }
+
+    this.ok(
+      res,
+      fillDTO(FilmResponse, similarFilms)
+    );
+  }
+
+  public async deleteFilm(req: Request, res: Response): Promise<void> {
+    const film = await this.filmService.deleteById(req.params.filmId);
+
+    if (!film) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Film with id «${req.params.filmId}» doesn't exist.`,
+        'FilmController'
+      );
+    }
+
+    this.logger.info('The film was deleted');
+
+    this.noContent(
+      res,
+      fillDTO(FilmResponse, film)
+    );
+  }
+
+  public async editFilm(req: Request, res: Response): Promise<void> {
+    const film = await this.filmService.updateById(req.params.filmId, req.body);
+
+    if (!film) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Film with id «${req.params.filmId}» doesn't exist.`,
+        'FilmController'
+      );
+    }
+
+    this.logger.info('The film was updated');
+
+    this.ok(
+      res,
+      fillDTO(FilmResponse, film)
+    );
+  }
+
+  public async getFilm(req: Request, res: Response): Promise<void> {
+    const film = await this.filmService.findById(req.params.filmId);
+
+    if (!film) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Film with id «${req.params.filmId}» doesn't exist.`,
+        'FilmController'
+      );
+    }
+
+    this.ok(
+      res,
+      fillDTO(FilmResponse, film)
+    );
+  }
+
+  public async getAllFilms(_req: Request, res: Response): Promise<void> {
     const films = await this.filmService.findAllFims();
 
-    const filmResponse = fillDTO(FilmResponse, films);
-    this.send(res, StatusCodes.OK, filmResponse);
+    this.ok(
+      res,
+      fillDTO(FilmResponse, films)
+    );
   }
 
-  public async create(
+  public async createFilm(
     {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
     res: Response
   ): Promise<void> {
-    const existFilm = await this.filmService.findByName(body.name);
+    const existsFilm = await this.filmService.findByName(body.name);
 
-    if (existFilm) {
-      const errorMessage = `Film with name «${body.name}» exists.`;
-      this.send(res, StatusCodes.UNPROCESSABLE_ENTITY, {error: errorMessage});
-      return this.logger.error(errorMessage);
+    if (existsFilm) {
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `Film with name «${body.name}» exists.`,
+        'FilmController'
+      );
     }
 
     const result = await this.filmService.create(body);
 
-    this.send(
+    this.created(
       res,
-      StatusCodes.CREATED,
       fillDTO(FilmResponse, result)
     );
   }
