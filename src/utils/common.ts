@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import { plainToInstance } from 'class-transformer';
+import { ClassConstructor } from 'class-transformer';
 import { TypesGenre} from '../types/film-type/genres.js';
 import { Film } from '../types/film-type/film.js';
 import { GenreTypes } from '../types/film-type/film-genres.enum.js';
@@ -59,4 +61,11 @@ const createSHA256 = (line: string, salt: string): string => {
   return shaHasher.update(line).digest('hex');
 };
 
-export { createFilm, getErrorMessage, createSHA256 };
+const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
+  plainToInstance(someDto, plainObject, {excludeExtraneousValues: true});
+
+
+const createErrorObject = (message: string) => ({
+  error: message,
+});
+export { createFilm, getErrorMessage, createSHA256, fillDTO, createErrorObject };

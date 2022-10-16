@@ -436,7 +436,7 @@ paths:
         "404":
           description: Фильмы не найдены.
 
-  /promo:
+  /films/promo:
     get:
       tags:
         - films
@@ -456,7 +456,7 @@ paths:
         "404":
           description: Фильм не найден.
 
-  /favorite:
+  /films/favorite:
     get:
       tags:
         - films
@@ -494,7 +494,7 @@ paths:
                     type: string
                     example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
 
-  /favorite/{filmId}/{status}:
+  /films/favorite/{filmId}/{status}:
     post:
       tags:
         - films

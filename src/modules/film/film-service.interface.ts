@@ -10,7 +10,7 @@ export interface FilmServiceInterface {
   findAllFims(): Promise<DocumentType<FilmEntity>[]>;
   deleteById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
   updateById(filmId: string, dto: CreateFilmDto): Promise<DocumentType<FilmEntity> | null>;
-  findSimilarFilmsByGenre(genre: string, limit: number): Promise<DocumentType<FilmEntity>[]>;
+  findSimilarFilmsByGenre(filmId: string, limit: number): Promise<DocumentType<FilmEntity>[]>;
   findFavoriteFilms(): Promise<DocumentType<FilmEntity>[]>;
   changeStatusFavoriteFilms(filmId: string, status: number): Promise<DocumentType<FilmEntity> | null>;
 }
