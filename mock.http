@@ -104,4 +104,4 @@ Content-Type: application/json
 }
 
 ### Получить комментарии к фильму
-GET http://localhost:3000/comments/6342c5045ad5c9057706b64d HTTP/1.1
+GET http://localhost:3000/comments/6342c5045ad5c9057706c64d HTTP/1.1

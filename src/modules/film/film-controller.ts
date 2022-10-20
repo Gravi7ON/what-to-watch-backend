@@ -12,6 +12,7 @@ import CreateFilmDto from './dto/create-film.dto.js';
 import HttpError from '../../common/error/http-error.js';
 import { DEFAULT_FILMS_COUNT } from './film-constant.js';
 import { getRandomPositiveInteger } from '../../utils/random.js';
+import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 
 @injectable()
 export default class FilmController extends Controller {
@@ -27,11 +28,36 @@ export default class FilmController extends Controller {
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createFilm});
     this.addRoute({path: '/favorite', method: HttpMethod.Get, handler: this.getFavoriteFilms});
     this.addRoute({path: '/promo', method: HttpMethod.Get, handler: this.getPromoFilm});
-    this.addRoute({path: '/favorite/:filmId/:status', method: HttpMethod.Post, handler: this.changeFavoriteFilm});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Get, handler: this.getFilm});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Put, handler: this.editFilm});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Delete, handler: this.deleteFilm});
-    this.addRoute({path: '/:filmId/similar', method: HttpMethod.Get, handler: this.getSimilarFilms});
+    this.addRoute({
+      path: '/favorite/:filmId/:status',
+      method: HttpMethod.Post,
+      handler: this.changeFavoriteFilm,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Get,
+      handler: this.getFilm,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Put,
+      handler: this.editFilm,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Delete,
+      handler: this.deleteFilm,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
+    this.addRoute({
+      path: '/:filmId/similar',
+      method: HttpMethod.Get,
+      handler: this.getSimilarFilms,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
   }
 
   public async getPromoFilm(_req: Request, res: Response): Promise<void> {

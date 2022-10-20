@@ -9,6 +9,7 @@ import { CommentServiceInterface } from './comment-service.interface.js';
 import { fillDTO } from '../../utils/common.js';
 import CommentResponse from './response/comment-response.js';
 import HttpError from '../../common/error/http-error.js';
+import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 
 @injectable()
 export default class CommentController extends Controller {
@@ -20,8 +21,18 @@ export default class CommentController extends Controller {
 
     this.logger.info('Register routes for CommentController...');
 
-    this.addRoute({path: '/:filmId', method: HttpMethod.Post, handler: this.createCommentToFilm});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Get, handler: this.getCommentsByFilm});
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Post,
+      handler: this.createCommentToFilm,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Get,
+      handler: this.getCommentsByFilm,
+      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+    });
   }
 
   public async createCommentToFilm(req: Request, res: Response): Promise<void> {
