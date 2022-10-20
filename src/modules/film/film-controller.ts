@@ -13,6 +13,7 @@ import HttpError from '../../common/error/http-error.js';
 import { DEFAULT_FILMS_COUNT } from './film-constant.js';
 import { getRandomPositiveInteger } from '../../utils/random.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
+import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.js';
 
 @injectable()
 export default class FilmController extends Controller {
@@ -25,7 +26,12 @@ export default class FilmController extends Controller {
     this.logger.info('Register routes for FilmController...');
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.getAllFilms});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createFilm});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.createFilm,
+      middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
+    });
     this.addRoute({path: '/favorite', method: HttpMethod.Get, handler: this.getFavoriteFilms});
     this.addRoute({path: '/promo', method: HttpMethod.Get, handler: this.getPromoFilm});
     this.addRoute({
@@ -44,7 +50,10 @@ export default class FilmController extends Controller {
       path: '/:filmId',
       method: HttpMethod.Put,
       handler: this.editFilm,
-      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new ValidateDtoMiddleware(CreateFilmDto)
+      ]
     });
     this.addRoute({
       path: '/:filmId',
