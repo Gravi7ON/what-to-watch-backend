@@ -29,7 +29,7 @@ export default class FilmController extends Controller {
     this.addRoute({path: '/promo', method: HttpMethod.Get, handler: this.getPromoFilm});
     this.addRoute({path: '/favorite/:filmId/:status', method: HttpMethod.Post, handler: this.changeFavoriteFilm});
     this.addRoute({path: '/:filmId', method: HttpMethod.Get, handler: this.getFilm});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Post, handler: this.editFilm});
+    this.addRoute({path: '/:filmId', method: HttpMethod.Put, handler: this.editFilm});
     this.addRoute({path: '/:filmId', method: HttpMethod.Delete, handler: this.deleteFilm});
     this.addRoute({path: '/:filmId/similar', method: HttpMethod.Get, handler: this.getSimilarFilms});
   }
@@ -40,7 +40,7 @@ export default class FilmController extends Controller {
     if (!promoFilms) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        'can\'t find promo film',
+        'Can\'t find promo film',
         'FilmController'
       );
     }

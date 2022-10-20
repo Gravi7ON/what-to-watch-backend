@@ -6,14 +6,22 @@ import { CommentEntity } from './comment-entity.js';
 import CreateCommentDto from './dto/create-comment.dto.js';
 import { SortType } from '../../types/film-type/sort-type.enum.js';
 import { DEFAULT_COMMENT_COUNT } from './comment-constant.js';
+import { FilmEntity } from '../film/film-entity.js';
 
 @injectable()
 export default class CommentService implements CommentServiceInterface {
   constructor(
-    @inject(Component.CommentModel) private readonly commentModel: types.ModelType<CommentEntity>
+    @inject(Component.CommentModel) private readonly commentModel: types.ModelType<CommentEntity>,
+    @inject(Component.FilmModel) private readonly filmModel: types.ModelType<FilmEntity>
   ) {}
 
-  public async create(filmId: string, dto: CreateCommentDto): Promise<DocumentType<CommentEntity>> {
+  public async findFilmAndCreateComment(filmId: string, dto: CreateCommentDto): Promise<DocumentType<CommentEntity> | null> {
+    const existedFilm = await this.filmModel.findById(filmId);
+
+    if (!existedFilm) {
+      return null;
+    }
+
     const commentWithFilmId = {
       ...dto,
       filmId

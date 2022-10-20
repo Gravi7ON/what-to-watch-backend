@@ -285,7 +285,7 @@ paths:
         "404":
           description: Фильм не найден
 
-    post:
+    put:
       tags:
         - films
       security:
@@ -570,8 +570,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/comment'
 
-        "400":
-          description: Ошибка тела запроса.
+        "404":
+          description: Фильм не найден.
           content:
             application/json:
               schema:
@@ -618,6 +618,10 @@ paths:
                 rating:
                   type: string
                   example: 7
+
+                userId:
+                  type: string
+                  example: 6329c3d6a04ab1061c6425ea
         required: true
 
       responses:
@@ -630,8 +634,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/comment'
 
-        "400":
-          description: Ошибка тела запроса.
+        "404":
+          description: Фильм не найден.
           content:
             application/json:
               schema:
@@ -788,7 +792,7 @@ components:
       type: object
 
       properties:
-        id:
+        filmId:
           type: string
           example: 6329c3d6a04ab1061c6425ea
 
@@ -804,14 +808,6 @@ components:
           type: string
           example: Mon Oct 03 2022 16:17:11 GMT+0500 (Екатеринбург, стандартное время)
 
-        author:
-          type: object
-
-          properties:
-            userId:
-              type: string
-              example: 6329c3d6a04ab1061c6425ea
-
-            userName:
-              type: string
-              example: Kate Muir
+        userId:
+          type: string
+          example: 6329c3d6a04ab1061c6425ea

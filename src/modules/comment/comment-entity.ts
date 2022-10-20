@@ -28,7 +28,7 @@ export class CommentEntity extends defaultClasses.TimeStamps {
     required: true,
     min: 1,
     max: 10,
-    default: 0
+    default: 1
   })
   public filmRating!: number;
 
