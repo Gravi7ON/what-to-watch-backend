@@ -205,6 +205,11 @@ class FilmService implements FilmServiceInterface {
         .exec()
     )[0];
   }
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.filmModel
+      .exists({_id: documentId})) !== null;
+  }
 }
 
 export default FilmService;

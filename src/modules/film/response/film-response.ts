@@ -45,8 +45,8 @@ export default class FilmResponse {
   @Transform((value) => value.obj.userId.toString())
   public userId!: string;
 
-  @Expose()
-  public publishDate!: Date;
+  @Expose({name: 'createdAt'})
+  public publishDate!: string;
 
   @Expose()
   public previewVideoLink!: string;
