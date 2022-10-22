@@ -2,7 +2,7 @@
 GET http://localhost:5050/api HTTP/1.1
 
 ### Получить список фильмов
-GET http://localhost:3000/films HTTP/1.1
+GET http://localhost:3000/films?limit=2 HTTP/1.1
 
 ### Получить список любимых фильмов
 GET http://localhost:3000/films/favorite HTTP/1.1
@@ -17,7 +17,7 @@ GET http://localhost:3000/films/6342c5045ad5c9057706c64d HTTP/1.1
 GET http://localhost:3000/films/promo HTTP/1.1
 
 ### Получить похожие фильмы
-GET http://localhost:3000/films/6342c5045ad5c9057706c647/similar HTTP/1.1
+GET http://localhost:3000/films/6342c5045ad5c9057706c647/similar?limit=1 HTTP/1.1
 
 ### Удалить фильм
 DELETE http://localhost:3000/films/634a685d3d4420e30ef908e7 HTTP/1.1

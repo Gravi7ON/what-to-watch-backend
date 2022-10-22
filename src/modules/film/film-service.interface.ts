@@ -8,7 +8,7 @@ export interface FilmServiceInterface extends DocumentExistsInterface {
   findByName(filmName: string): Promise<DocumentType<FilmEntity> | null>;
   findById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
   findOrCreate(filmName: string, dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
-  findAllFims(): Promise<DocumentType<FilmEntity>[]>;
+  findAllFims(limit: number | undefined): Promise<DocumentType<FilmEntity>[]>;
   deleteById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
   updateById(filmId: string, dto: CreateFilmDto): Promise<DocumentType<FilmEntity> | null>;
   findSimilarFilmsByGenre(filmId: string, limit: number): Promise<DocumentType<FilmEntity>[]>;

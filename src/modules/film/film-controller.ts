@@ -84,7 +84,7 @@ export default class FilmController extends Controller {
   }
 
   public async getPromoFilm(_req: Request, res: Response): Promise<void> {
-    const promoFilms = await this.filmService.findAllFims();
+    const promoFilms = await this.filmService.findAllFims(DEFAULT_FILMS_COUNT);
 
     if (!promoFilms) {
       throw new HttpError(
@@ -131,7 +131,8 @@ export default class FilmController extends Controller {
   }
 
   public async getSimilarFilms(req: Request, res: Response): Promise<void> {
-    const similarFilms = await this.filmService.findSimilarFilmsByGenre(req.params.filmId, DEFAULT_FILMS_COUNT);
+    const similarFilms = await this.filmService
+      .findSimilarFilmsByGenre(req.params.filmId, Number(req.query.limit) || DEFAULT_FILMS_COUNT);
 
     this.ok(
       res,
@@ -170,8 +171,8 @@ export default class FilmController extends Controller {
     );
   }
 
-  public async getAllFilms(_req: Request, res: Response): Promise<void> {
-    const films = await this.filmService.findAllFims();
+  public async getAllFilms(req: Request, res: Response): Promise<void> {
+    const films = await this.filmService.findAllFims(Number(req.query.limit) || DEFAULT_FILMS_COUNT);
 
     this.ok(
       res,
