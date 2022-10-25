@@ -84,7 +84,7 @@ class FilmService implements FilmServiceInterface {
           }
         },
         {$unset: 'comments'},
-        {$limit: limit},
+        {$limit: +limit},
         {$sort: {publishDate: SortType.Down}}
       ])
       .exec();
