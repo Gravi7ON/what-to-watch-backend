@@ -1,11 +1,11 @@
 import {
+  Matches,
   MaxLength,
-  MinLength,
-  Contains
+  MinLength
 } from 'class-validator';
 
 export default class UpdateUserDto {
-  @Contains('.jpg' || '.png')
+  @Matches(/.jpg|.png/)
   public avatar!: string;
 
   @MinLength(1, {message: 'Minimum userName length must be 1'})

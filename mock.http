@@ -107,7 +107,7 @@ Content-Type: application/json
 GET http://localhost:3000/comments/6342c5045ad5c9057706c64d HTTP/1.1
 
 ### Получить файл(изображение)
-GET http://localhost:3000/upload/1SzCS0h0wVpAxVHHwNYuS.jpeg HTTP/1.1
+GET http://localhost:3000/upload/853BP7ZOp-P0KYazwhhEe.jpg HTTP/1.1
 
 ### Отправка аватарки пользователя
 POST http://localhost:3000/users/6342c5045ad5c9057706c644/avatar HTTP/1.1

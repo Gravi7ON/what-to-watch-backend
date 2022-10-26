@@ -8,13 +8,14 @@ import CreateUserDto from './dto/create-user.dto.js';
 import { UserServiceInterface } from './user-service.interface.js';
 import HttpError from '../../common/error/http-error.js';
 import { StatusCodes } from 'http-status-codes';
-import { fillDTO } from '../../utils/common.js';
+import { fillDTO, createJWT } from '../../utils/common.js';
 import UserResponse from './response/user-response.js';
 import { ConfigInterface } from '../../common/config/config.interface.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 import { UploadFileMiddleware } from '../../common/middlewares/upload-file.js';
+import { JWT_ALGORITM } from './user-constant.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -36,7 +37,7 @@ export default class UserController extends Controller {
       path: '/login',
       method: HttpMethod.Post,
       handler: this.login,
-      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
+      middlewares: [new ValidateDtoMiddleware(LoginUserDto)]
     });
     this.addRoute({
       path: '/:userId/avatar',
@@ -64,33 +65,37 @@ export default class UserController extends Controller {
     }
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
-    this.send(
+
+    this.created(
       res,
-      StatusCodes.CREATED,
       fillDTO(UserResponse, result)
     );
   }
 
   public async login(
     {body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _res: Response,
+    res: Response,
   ): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
+    const user = await this.userService.verifyUser(body, this.configService.get('SALT'));
 
-    if (!existsUser) {
+    if (!user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with email ${body.email} not found.`,
-        'UserController',
+        'Unauthorized',
+        'UserController'
       );
     }
 
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
+    const token = await createJWT(
+      JWT_ALGORITM,
+      this.configService.get('JWT_SECRET'),
+      {}
     );
+
+    this.ok(res, {
+      ...fillDTO(UserResponse, user),
+      token
+    });
   }
 
   public async uploadAvatar(req: Request, res: Response) {

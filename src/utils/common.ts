@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import * as jose from 'jose';
 import { plainToInstance } from 'class-transformer';
 import { ClassConstructor } from 'class-transformer';
 import { TypesGenre} from '../types/film-type/genres.js';
@@ -68,4 +69,19 @@ const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
 const createErrorObject = (message: string) => ({
   error: message,
 });
-export { createFilm, getErrorMessage, createSHA256, fillDTO, createErrorObject };
+
+const createJWT = async (algoritm: string, jwtSecret: string, payload: object): Promise<string> =>
+  new jose.SignJWT({...payload})
+    .setProtectedHeader({ alg: algoritm})
+    .setIssuedAt()
+    .setExpirationTime('2d')
+    .sign(crypto.createSecretKey(jwtSecret, 'utf-8'));
+
+export {
+  createFilm,
+  getErrorMessage,
+  createSHA256,
+  fillDTO,
+  createErrorObject,
+  createJWT
+};

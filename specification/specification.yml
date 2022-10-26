@@ -28,7 +28,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/createUser'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 6329c3d6a04ab1061c6425ea
+
+                  email:
+                    type: string
+                    example: keks@htmlacademy.ru
+
+                  userName:
+                    type: string
+                    example: Keks
+
+                  avatar:
+                    type: string
+                    example: unknown.jpg
         required: true
 
       responses:
