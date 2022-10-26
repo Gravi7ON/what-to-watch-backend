@@ -16,6 +16,7 @@ import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.js'
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 import { UploadFileMiddleware } from '../../common/middlewares/upload-file.js';
 import { JWT_ALGORITM } from './user-constant.js';
+import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -40,6 +41,12 @@ export default class UserController extends Controller {
       middlewares: [new ValidateDtoMiddleware(LoginUserDto)]
     });
     this.addRoute({
+      path: '/login',
+      method: HttpMethod.Get,
+      handler: this.checkAuthenticate,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+    this.addRoute({
       path: '/:userId/avatar',
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
@@ -48,6 +55,23 @@ export default class UserController extends Controller {
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
       ]
     });
+  }
+
+  public async checkAuthenticate(req: Request, res: Response) {
+    const user = await this.userService.findByEmail(req.user.email);
+
+    if (!user) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Пользователь с таким email «${req.body.email}» не существует.`,
+        'UserController'
+      );
+    }
+
+    this.ok(
+      res,
+      fillDTO(UserResponse, user)
+    );
   }
 
   public async create(
@@ -89,7 +113,7 @@ export default class UserController extends Controller {
     const token = await createJWT(
       JWT_ALGORITM,
       this.configService.get('JWT_SECRET'),
-      {}
+      {email: user.email, id: user.id}
     );
 
     this.ok(res, {

@@ -15,6 +15,7 @@ import { getRandomPositiveInteger } from '../../utils/random.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.js';
+import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.js';
 
 @injectable()
 export default class FilmController extends Controller {
@@ -31,15 +32,24 @@ export default class FilmController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.createFilm,
-      middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFilmDto)
+      ]
     });
-    this.addRoute({path: '/favorite', method: HttpMethod.Get, handler: this.getFavoriteFilms});
+    this.addRoute({
+      path: '/favorite',
+      method: HttpMethod.Get,
+      handler: this.getFavoriteFilms,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
     this.addRoute({path: '/promo', method: HttpMethod.Get, handler: this.getPromoFilm});
     this.addRoute({
       path: '/favorite/:filmId/:status',
       method: HttpMethod.Post,
       handler: this.changeFavoriteFilm,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId')
       ]
@@ -58,6 +68,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Put,
       handler: this.editFilm,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new ValidateDtoMiddleware(CreateFilmDto),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId')
@@ -68,6 +79,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Delete,
       handler: this.deleteFilm,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId')
       ]
