@@ -1,4 +1,4 @@
-import { Max, MaxLength, Min, MinLength, IsMongoId, IsDateString } from 'class-validator';
+import { Max, MaxLength, Min, MinLength, IsDateString } from 'class-validator';
 
 export default class CreateCommentDto {
   @MinLength(5, {message: 'Minimum text comment length must be 5'})
@@ -12,6 +12,5 @@ export default class CreateCommentDto {
   @IsDateString({}, {message: 'Field publishDate must be valid ISO date'})
   public publishDate?: Date;
 
-  @IsMongoId({message: 'Field userId field must be valid an id'})
   public userId!: string;
 }

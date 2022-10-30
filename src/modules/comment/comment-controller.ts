@@ -9,6 +9,7 @@ import { fillDTO } from '../../utils/common.js';
 import CommentResponse from './response/comment-response.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.js';
+import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.js';
 
 @injectable()
 export default class CommentController extends Controller {
@@ -25,6 +26,7 @@ export default class CommentController extends Controller {
       method: HttpMethod.Post,
       handler: this.createCommentToFilm,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.commentService, 'Film', 'filmId')
       ]
@@ -42,7 +44,10 @@ export default class CommentController extends Controller {
 
   public async createCommentToFilm(req: Request, res: Response): Promise<void> {
     const filmId = req.params.filmId;
-    const result = await this.commentService.findFilmAndCreateComment(filmId, req.body);
+    const result = await this.commentService.findFilmAndCreateComment(filmId, {
+      ...req.body,
+      userId: req.user.id
+    });
 
     this.logger.info(`New comment for film with id:${filmId} was created`);
 
