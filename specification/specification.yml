@@ -55,8 +55,52 @@ paths:
                     type: string
                     example: unknown.jpg
 
+        "400":
+          description: Некорректные данные.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'VALIDATION_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Validation error: /login'
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        property:
+                          type: string
+                          example: 'email'
+
+                        messages:
+                          type: array
+                          items:
+                            type: string
+                            example: 'Field email must be valid address'
+
         "409":
           description: Пользователь с таким email уже существует.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Пользователь с таким email «corans@overlook.net» уже существует.'
+                  details:
+                    type: string
+                    example: []
 
   /users/login:
     post:
@@ -90,7 +134,51 @@ paths:
                 $ref: '#/components/schemas/user'
 
         "400":
-          description: Ошибка тела запроса.
+          description: Некорректные данные.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'VALIDATION_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Validation error: /login'
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        property:
+                          type: string
+                          example: 'email'
+
+                        messages:
+                          type: array
+                          items:
+                            type: string
+                            example: 'Field email must be valid address'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized'
+                  details:
+                    type: string
+                    example: []
 
     get:
       tags:
@@ -102,10 +190,10 @@ paths:
 
       parameters:
         - in: header
-          name: X-Token
+          name: Autorization
           schema:
             type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
           required: true
 
       responses:
@@ -133,15 +221,22 @@ paths:
                     example: unknown.jpg
 
         "401":
-          description: Пользователь не авторизован.
+          description: Пользователь не авторизован или невалидный токен.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
 
   /films:
     get:
@@ -170,10 +265,10 @@ paths:
 
       parameters:
         - in: header
-          name: X-Token
+          name: Autorization
           schema:
             type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
           required: true
 
       requestBody:
@@ -252,25 +347,78 @@ paths:
               schema:
                 $ref: '#/components/schemas/film'
 
-        "401":
-          description: Пользователь не авторизован.
+        "400":
+          description: Некорректные данные.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'VALIDATION_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Validation error: /films'
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        property:
+                          type: string
+                          example: 'name'
+
+                        messages:
+                          type: array
+                          items:
+                            example: ['Maximum title length must be 100', 'Minimum title length must be 2']
+
+        "401":
+          description: Пользователь не авторизован или невалидный токен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
+
+        "409":
+          description: Фильм с таким именем уже существует.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with name «Snatch» exists.'
+                  details:
+                    type: string
+                    example: []
 
   /films/{filmId}:
-    parameters:
-        - in: header
-          name: X-Token
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
-          required: true
+    get:
+      tags:
+        - films
+      summary: Получить фильм
+      description: Возвращает фильм с идентификатором `filmId`.
+
+      parameters:
         - in: path
           name: filmId
           schema:
@@ -278,12 +426,6 @@ paths:
             example: 6329c3d6a04ab1061c6425ea
           required: true
           description: Уникальный идентификатор фильма
-
-    get:
-      tags:
-        - films
-      summary: Получить фильм
-      description: Возвращает фильм с идентификатором `filmId`.
 
       responses:
         "200":
@@ -293,8 +435,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/film'
 
+        "400":
+          description: Невалидный id.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
+
         "404":
-          description: Фильм не найден
+          description: Фильм не нейден.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
     put:
       tags:
@@ -304,6 +481,21 @@ paths:
       summary: Редактирование карточки с фильмом созданная пользователем
       description: Возвращает фильм с идентификатором `filmId`.
 
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма
+
       requestBody:
         description: Объект редактируемого фильма вместе и id.
         content:
@@ -312,10 +504,6 @@ paths:
               type: object
 
               properties:
-                id:
-                  type: string
-                  example: 6329c3d6a04ab1061c6425ea
-
                 name:
                   type: string
                   example: The Grand Budapest Hotel
@@ -358,10 +546,6 @@ paths:
                   type: number
                   example: 2014
 
-                userId:
-                  type: string
-                  example: 6329c3d6a04ab1061c6425ea
-
                 publishDate:
                   type: string
                   example: Mon Oct 03 2022 16:17:11 GMT+0500 (Екатеринбург, стандартное время)
@@ -384,16 +568,62 @@ paths:
               schema:
                 $ref: '#/components/schemas/film'
 
-        "401":
-          description: Пользователь не авторизован.
+        "400":
+          description: Невалидный id.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
+
+
+        "401":
+          description: Пользователь не авторизован или невалидный токен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
+
+        "404":
+          description: Фильм не нейден.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
     delete:
       tags:
@@ -403,20 +633,80 @@ paths:
       summary: Удаление карточки с фильмом
       description: Удаление карточки с фильмом созданная пользователем.
 
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+          required: true
+        - in: path
+          name: filmId
+          schema:
+            type: string
+            example: 6329c3d6a04ab1061c6425ea
+          required: true
+          description: Уникальный идентификатор фильма
+
       responses:
         "204":
           description: Карточка удалена.
 
-        "401":
-          description: Пользователь не авторизован.
+        "400":
+          description: Невалидный id.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
+
+        "401":
+          description: Пользователь не авторизован или невалидный токен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
+
+        "404":
+          description: Фильм не нейден.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
   /films/{filmId}/similar:
     get:
@@ -444,8 +734,43 @@ paths:
                 items:
                   $ref: '#/components/schemas/film'
 
+        "400":
+          description: Невалидный id.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
+
         "404":
-          description: Фильмы не найдены.
+          description: Фильмы не нейдены.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
   /films/promo:
     get:
@@ -465,7 +790,23 @@ paths:
                   $ref: '#/components/schemas/film'
 
         "404":
-          description: Фильм не найден.
+          description: Фильм не нейден.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
   /films/favorite:
     get:
@@ -478,10 +819,10 @@ paths:
 
       parameters:
         - in: header
-          name: X-Token
+          name: Autorization
           schema:
             type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
           required: true
 
       responses:
@@ -495,15 +836,41 @@ paths:
                   $ref: '#/components/schemas/film'
 
         "401":
-          description: Пользователь не авторизован.
+          description: Пользователь не авторизован или невалидный токен.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
+
+        "404":
+          description: Фильмы не нейдены.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
   /films/favorite/{filmId}/{status}:
     post:
@@ -530,10 +897,10 @@ paths:
           required: true
           description: Статус фильма. Может быть `1` или `0`, где `1` добавляет фильма в список «к просмотру», а `0` удаляет.
         - in: header
-          name: X-Token
+          name: Autorization
           schema:
             type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
           required: true
 
       responses:
@@ -544,16 +911,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/film'
 
-        "401":
-          description: Пользователь не авторизован.
+        "400":
+          description: Невалидный id.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
+
+        "401":
+          description: Пользователь не авторизован или невалидный токен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
+
+        "404":
+          description: Фильм не нейден.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
   /comments/{filmId}:
     get:
@@ -582,15 +994,42 @@ paths:
                   $ref: '#/components/schemas/comment'
 
         "400":
-          description: Ошибка тела запроса.
+          description: Невалидный id.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Фильм id: 6329c3d6a04ab1061c6425ea не существует'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
+
+        "404":
+          description: Фильмы не нейдены.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
     post:
       tags:
@@ -609,10 +1048,10 @@ paths:
           required: true
           description: Уникальный идентификатор фильма.
         - in: header
-          name: X-Token
+          name: Autorization
           schema:
             type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
+            example: Bearer T2xpdmVyLmNvbm5lckBnbWFpbC5jb20
           required: true
 
       requestBody:
@@ -629,10 +1068,6 @@ paths:
                 rating:
                   type: string
                   example: 7
-
-                userId:
-                  type: string
-                  example: 6329c3d6a04ab1061c6425ea
         required: true
 
       responses:
@@ -645,35 +1080,68 @@ paths:
                 items:
                   $ref: '#/components/schemas/comment'
 
-        "404":
-          description: Фильм не найден.
+        "400":
+          description: Невалидный id.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Фильм id: 6329c3d6a04ab1061c6425ea не существует'
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: '6342c5045ad5c9057706c64 is invalid ObjectID'
+
+                  details:
+                    type: string
+                    example: []
 
         "401":
-          description: Пользователь не авторизован.
+          description: Пользователь не авторизован или невалидный токен.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  errorType:
                     type: string
-                    example: 'Вы не зарегистрированы или у Вас нет доступа к этой странице'
+                    example: 'COMMON_ERROR'
 
+                  message:
+                    type: string
+                    example: 'Unauthorized or Invalid token'
+                  details:
+                    type: string
+                    example: []
+
+        "404":
+          description: Фильм не нейден.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorType:
+                    type: string
+                    example: 'COMMON_ERROR'
+
+                  message:
+                    type: string
+                    example: 'Film with 6342c5045ad5c9057706d64d not found.'
+
+                  details:
+                    type: string
+                    example: []
 
 components:
   securitySchemes:
     ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-Token
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   schemas:
     createUser:
@@ -796,7 +1264,7 @@ components:
 
         isFavorite:
           type: boolean
-          example: true
+          example: false
 
 
     comment:

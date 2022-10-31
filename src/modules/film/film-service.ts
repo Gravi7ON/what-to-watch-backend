@@ -49,7 +49,7 @@ class FilmService implements FilmServiceInterface {
               rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
             }
           },
-          {$unset: 'comments'},
+          {$unset: 'comments'}
         ])
         .exec()
     )[0];
@@ -115,10 +115,10 @@ class FilmService implements FilmServiceInterface {
             $addFields: {
               id: {$toString: '$_id'},
               scoresCount: {$size: '$comments'},
-              rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]},
+              rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
             }
           },
-          {$unset: 'comments'},
+          {$unset: 'comments'}
         ])
         .exec()
     )[0];
@@ -197,10 +197,10 @@ class FilmService implements FilmServiceInterface {
             $addFields: {
               id: {$toString: '$_id'},
               scoresCount: {$size: '$comments'},
-              rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]},
+              rating: {$ifNull: [{$avg: '$comments.filmRating'}, 0]}
             }
           },
-          {$unset: 'comments'},
+          {$unset: 'comments'}
         ])
         .exec()
     )[0];

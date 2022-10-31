@@ -22,10 +22,10 @@ import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.j
 export default class UserController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(Component.ConfigInterface) private readonly configService: ConfigInterface
   ) {
-    super(logger);
+    super(logger, configService);
     this.logger.info('Register routes for UserController...');
 
     this.addRoute({
@@ -62,8 +62,8 @@ export default class UserController extends Controller {
 
     if (!user) {
       throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Пользователь с таким email «${req.body.email}» не существует.`,
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
         'UserController'
       );
     }
@@ -123,8 +123,15 @@ export default class UserController extends Controller {
   }
 
   public async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
-    });
+    const {userId} = req.params;
+    const uploaFile = {
+      id: userId,
+      avatar: req.file?.filename
+    };
+    await this.userService.updateById(userId, uploaFile);
+    this.created(
+      res,
+      fillDTO(UserResponse, uploaFile)
+    );
   }
 }
