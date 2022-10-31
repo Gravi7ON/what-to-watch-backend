@@ -1,15 +1,13 @@
 import {
   MaxLength,
   MinLength,
-  IsEmail,
-  Matches
+  IsEmail
 } from 'class-validator';
 
 export default class CreateUserDto {
   @IsEmail({}, {message: 'Field email must be valid address'})
   public email!: string ;
 
-  @Matches(/.jpg|.png/)
   public avatar?: string;
 
   @MinLength(1, {message: 'Minimum userName length must be 1'})

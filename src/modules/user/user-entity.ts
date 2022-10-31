@@ -34,7 +34,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     default: 'unknown.jpg',
     match: [/.jpg|.png/, 'Incorrect file format']
   })
-  public avatar: string;
+  public avatar?: string;
 
   @prop({
     require: true,

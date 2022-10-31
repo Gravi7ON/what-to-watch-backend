@@ -10,14 +10,16 @@ import CommentResponse from './response/comment-response.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.js';
 import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.js';
+import { ConfigInterface } from '../../common/config/config.interface.js';
 
 @injectable()
 export default class CommentController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.CommentServiceInterface) private readonly commentService: CommentServiceInterface
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for CommentController...');
 

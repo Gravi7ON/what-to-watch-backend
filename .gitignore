@@ -5,6 +5,7 @@
 /dist/
 /docs/
 /upload/
+/static/
 .idea/*
 /mocks/*.large.tsv
 /mongodb

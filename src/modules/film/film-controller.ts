@@ -16,14 +16,16 @@ import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-ob
 import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.js';
 import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.js';
+import { ConfigInterface } from '../../common/config/config.interface.js';
 
 @injectable()
 export default class FilmController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.FilmServiceInterface) private readonly filmService: FilmServiceInterface
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for FilmController...');
 

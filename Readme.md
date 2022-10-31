@@ -23,6 +23,8 @@ _`.editorconfig`, `.gitattributes`, `.gitignore`._
 `DB_NAME=what-to-watch - Имя базы данных (MongoDB)`
 `UPLOAD_DIRECTORY=upload - Каталог для загрузки файлов`
 `JWT_SECRET=secret - Секрет для JWT`
+`STATIC_DIRECTORY_PATH=static - Путь к каталогу со статическими ресурсами`
+`HOST=localhost - Хост на котором запускается сервис`
 
 ### Клонируйте репозиторий на свой компьютер
 
