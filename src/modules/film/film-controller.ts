@@ -6,7 +6,7 @@ import { Component } from '../../types/component-types.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { HttpMethod } from '../../types/http-methods.enum.js';
 import { FilmServiceInterface } from './film-service.interface.js';
-import { fillDTO } from '../../utils/common.js';
+import { dataForUnauthorized, fillDTO } from '../../utils/common.js';
 import FilmResponse from './response/film-response.js';
 import CreateFilmDto from './dto/create-film.dto.js';
 import HttpError from '../../common/error/http-error.js';
@@ -95,7 +95,7 @@ export default class FilmController extends Controller {
     });
   }
 
-  public async getPromoFilm(_req: Request, res: Response): Promise<void> {
+  public async getPromoFilm(req: Request, res: Response): Promise<void> {
     const promoFilms = await this.filmService.findAllFims(DEFAULT_FILMS_COUNT);
 
     if (!promoFilms) {
@@ -108,7 +108,9 @@ export default class FilmController extends Controller {
 
     this.ok(
       res,
-      fillDTO(FilmResponse, promoFilms[getRandomPositiveInteger(0, promoFilms.length - 1)])
+      fillDTO(FilmResponse,
+        dataForUnauthorized(req.user, promoFilms[getRandomPositiveInteger(0, promoFilms.length - 1)]) ??
+        promoFilms[getRandomPositiveInteger(0, promoFilms.length - 1)])
     );
   }
 
@@ -148,7 +150,7 @@ export default class FilmController extends Controller {
 
     this.ok(
       res,
-      fillDTO(FilmResponse, similarFilms)
+      fillDTO(FilmResponse, dataForUnauthorized(req.user, similarFilms) ?? similarFilms)
     );
   }
 
@@ -164,7 +166,10 @@ export default class FilmController extends Controller {
   }
 
   public async editFilm(req: Request, res: Response): Promise<void> {
-    const film = await this.filmService.updateById(req.params.filmId, req.body);
+    const film = await this.filmService.updateById(req.params.filmId, {
+      ...req.body,
+      userId: req.user.id
+    });
 
     this.logger.info('The film was updated');
 
@@ -179,7 +184,7 @@ export default class FilmController extends Controller {
 
     this.ok(
       res,
-      fillDTO(FilmResponse, film)
+      fillDTO(FilmResponse, dataForUnauthorized(req.user, film) ?? film)
     );
   }
 
@@ -188,25 +193,25 @@ export default class FilmController extends Controller {
 
     this.ok(
       res,
-      fillDTO(FilmResponse, films)
+      fillDTO(FilmResponse, dataForUnauthorized(req.user, films) ?? films)
     );
   }
 
   public async createFilm(
-    {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
+    req: Request,
     res: Response
   ): Promise<void> {
-    const existsFilm = await this.filmService.findByName(body.name);
+    const existsFilm = await this.filmService.findByName(req.body.name);
 
     if (existsFilm) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Film with name «${body.name}» exists.`,
+        `Film with name «${req.body.name}» exists.`,
         'FilmController'
       );
     }
 
-    const result = await this.filmService.create(body);
+    const result = await this.filmService.create({...req.body, userId: req.user.id});
 
     this.created(
       res,

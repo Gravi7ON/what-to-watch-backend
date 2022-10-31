@@ -1,7 +1,6 @@
 import {
   MaxLength,
   MinLength,
-  IsMongoId,
   IsEnum,
   IsInt,
   Contains,
@@ -45,7 +44,6 @@ export default class CreateFilmDto {
   @IsInt({message: 'Field released must be an integer'})
   public released!: number;
 
-  @IsMongoId({message: 'Field userId field must be valid an id'})
   public userId!: string;
 
   @IsDateString({}, {message: 'Field publishDate must be valid ISO date'})

@@ -1,10 +1,13 @@
 import crypto from 'crypto';
 import * as jose from 'jose';
+import { DocumentType } from '@typegoose/typegoose';
+import { BeAnObject } from '@typegoose/typegoose/lib/types.js';
 import { plainToInstance } from 'class-transformer';
 import { ClassConstructor } from 'class-transformer';
 import { TypesGenre} from '../types/film-type/genres.js';
 import { Film } from '../types/film-type/film.js';
 import { GenreTypes } from '../types/film-type/film-genres.enum.js';
+import { FilmEntity } from '../modules/film/film-entity.js';
 
 const createFilm = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');
@@ -77,11 +80,36 @@ const createJWT = async (algoritm: string, jwtSecret: string, payload: object): 
     .setExpirationTime('2d')
     .sign(crypto.createSecretKey(jwtSecret, 'utf-8'));
 
+const dataForUnauthorized = (
+  authorizedUser: {
+    id: string;
+    email: string;
+},
+  data: (DocumentType<FilmEntity, BeAnObject> | null) | DocumentType<FilmEntity, BeAnObject>[]
+) => {
+  if (authorizedUser) {
+    return;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((film) => ({
+      ...film,
+      isFavorite: false
+    }));
+  }
+
+  return {
+    ...data,
+    isFavorite: false
+  };
+};
+
 export {
   createFilm,
   getErrorMessage,
   createSHA256,
   fillDTO,
   createErrorObject,
-  createJWT
+  createJWT,
+  dataForUnauthorized
 };
