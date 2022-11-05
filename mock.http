@@ -32,11 +32,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZ
 ### Редактировать фильм
 PUT http://localhost:3000/films/6342c5045ad5c9057706c64d HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjYzNDk0NDA3OGNkZGUzZmFlNjE0YTYwYiIsImlhdCI6MTY2NzE5ODc3MCwiZXhwIjoxNjY3MzcxNTcwfQ.ohJ9QMrGn3BE2ynYGK8DJHehS9-3DL843ibP89oQ82M
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImZpc2hAYmlnLmxvY2FsIiwiaWQiOiI2MzQyYzUwNDVhZDVjOTA1NzcwNmM2NDQiLCJpYXQiOjE2NjczNzkwMDcsImV4cCI6MTY2NzU1MTgwN30.V4t7fqHZAjAJY7dQOC8fWTz8S3nly4Y1s5f9HgwmKQU
 
 {
     "name": "What we do in the shadows",
-    "posterImage": "https://10.react.pages.academy/static/film/poster/Snatch.jpg",
+    "posterImage": "https://10.react.pages.academy/static/film/poster/What-We-Do-in-the-Shadows.jpg",
     "previewImage": "https://10.react.pages.academy/static/film/preview/snatch.jpg",
     "backgroundImage": "https://10.react.pages.academy/static/film/background/Snatch.jpg",
     "backgroundColor": "#FDFDFC",
@@ -57,26 +57,26 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZ
 ### Добавление новой карточки с фильмом
 POST http://localhost:3000/films HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRvcmFuc0BvdmVybG9vay5uZXQiLCJpZCI6IjYzNDk0NDA3OGNkZGUzZmFlNjE0YTYwYiIsImlhdCI6MTY2NzE5ODc3MCwiZXhwIjoxNjY3MzcxNTcwfQ.ohJ9QMrGn3BE2ynYGK8DJHehS9-3DL843ibP89oQ82M
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImZpc2hAYmlnLmxvY2FsIiwiaWQiOiI2MzQyYzUwNDVhZDVjOTA1NzcwNmM2NDQiLCJpYXQiOjE2NjczNzkwMDcsImV4cCI6MTY2NzU1MTgwN30.V4t7fqHZAjAJY7dQOC8fWTz8S3nly4Y1s5f9HgwmKQU
 
 {
-    "name": "Snatch",
-    "posterImage": "https://10.react.pages.academy/static/film/poster/Snatch.jpg",
-    "previewImage": "https://10.react.pages.academy/static/film/preview/snatch.jpg",
-    "backgroundImage": "https://10.react.pages.academy/static/film/background/Snatch.jpg",
-    "backgroundColor": "#FDFDFC",
-    "description": "Unscrupulous boxing promoters, violent bookmakers, a Russian gangster, incompetent amateur robbers and supposedly Jewish jewelers fight to track down a priceless stolen diamond.",
-    "director": "Guy Ritchie",
+    "name": "Orlando",
+    "posterImage": "https://10.react.pages.academy/static/film/poster/Orlando.jpg",
+    "previewImage": "https://10.react.pages.academy/static/film/preview/orlando.jpg",
+    "backgroundImage": "https://10.react.pages.academy/static/film/background/Orlando.jpg",
+    "backgroundColor": "#D8D3BD",
+    "description": "Young nobleman Orlando is commanded by Queen Elizabeth I to stay forever young. Miraculously, he does just that. The film follows him as he moves through several centuries of British history, experiencing a variety of lives and relationships along the way, and even changing sex.",
+    "director": "Sally Potter",
     "starring": [
-      "Jason Statham",
-      "Brad Pitt",
-      "Benicio Del Toro"
+      "Tilda Swinton",
+      "Billy Zane",
+      "Quentin Crisp"
     ],
-    "runTime": 104,
-    "genre": "Comedy",
-    "released": 2000,
+    "runTime": 94,
+    "genre": "Drama",
+    "released": 1992,
     "publishDate": "2022-09-28T13:48:56.371Z",
-    "videoLink": "https://10.react.pages.academy/static/film/video/matrix.mp4",
+    "videoLink": "https://10.react.pages.academy/static/film/video/bubbles.mp4",
     "previewVideoLink": "https://10.react.pages.academy/static/film/video/dog.mp4"
 }
 
@@ -96,13 +96,13 @@ POST http://localhost:3000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "fish@big.local",
+  "email": "Keks@mail.ru",
   "password": "123456"
 }
 
 ### Проверка авторизации пользователя
 GET http://localhost:3000/users/login HTTP/1.1
-Authorization: Bearer yJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImZpc2hAYmlnLmxvY2FsIiwiaWQiOiI2MzQyYzUwNDVhZDVjOTA1NzcwNmM2NDQiLCJpYXQiOjE2NjcyMjQ4ODgsImV4cCI6MTY2NzM5NzY4OH0.-I0EPVDxezkgsScifIDHjTJXkJ0JZlufnmMmmKrOtsM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImZpc2hAYmlnLmxvY2FsIiwiaWQiOiI2MzQyYzUwNDVhZDVjOTA1NzcwNmM2NDQiLCJpYXQiOjE2NjczNzkwMDcsImV4cCI6MTY2NzU1MTgwN30.V4t7fqHZAjAJY7dQOC8fWTz8S3nly4Y1s5f9HgwmKQU
 
 ### Создать комментарий
 POST http://localhost:3000/comments/6342c5045ad5c9057706c64d HTTP/1.1
@@ -121,12 +121,12 @@ GET http://localhost:3000/comments/6342c5045ad5c9057706c64d HTTP/1.1
 GET http://localhost:3000/upload/3V_jB7DZ1z90dtcBZ5eG0.jpg HTTP/1.1
 
 ### Отправка аватарки пользователя
-POST http://localhost:3000/users/6342c5045ad5c9057706c644/avatar HTTP/1.1
+POST http://localhost:3000/users/63626ff37a8b4dde626cded7/avatar HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="avatar"; filename="filename.jpg"
 Content-Type: image/jpeg
 
-< /Users/dmitryradionov/Desktop/avatar.jpg
+< /Users/dmitryradionov/Desktop/aviator.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
