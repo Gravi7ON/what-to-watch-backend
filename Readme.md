@@ -1,4 +1,4 @@
-# :floppy_disk: Личный проект «Что посмотреть»
+# :floppy_disk: Что посмотреть
 
 ---
 
@@ -18,27 +18,6 @@
 `STATIC_DIRECTORY_PATH=static - Путь к каталогу со статическими ресурсами`
 `HOST=localhost - Хост на котором запускается сервис`
 
-### Клонируйте репозиторий на свой компьютер
-
-<img width="769" alt="SSH" src="https://cloud.githubusercontent.com/assets/259739/20264180/42704126-aa7b-11e6-9ab4-73372b812a53.png">
-
-Клонировать репозиторий можно так:
-
-```
-git clone SSH-адрес_вашего_форка
-```
-
-Команда клонирует репозиторий на ваш компьютер и подготовит всё необходимое для старта работы.
-
 ### Сценарии запуска и работы с проектом описаны в [Workflow.md](/Workflow.md)
 
 В репозитории имеется фронтенд связанный с данным REST API, находящийся в директории [frontend](/frontend), все для работы указано в [Readme.md](/frontend/Readme.md)
-
----
-
-* Студент: [Дмитрий Радионов](https://up.htmlacademy.ru/nodejs-api/2/user/678357).
-* Наставник: [Глеб Клецков](https://up.htmlacademy.ru/react/10/user/1487865).
-
-<a href="https://htmlacademy.ru/profession/fullstack"><img align="left" width="50" height="50" title="HTML Academy" src="https://up.htmlacademy.ru/static/img/intensive/nodejs/logo-for-github-2.png"></a>
-
-Репозиторий создан для обучения на профессиональном онлайн‑курсе «[Node.js. Профессиональная разработка REST API](https://htmlacademy.ru/profession/fullstack)» от [HTML Academy](https://htmlacademy.ru).
